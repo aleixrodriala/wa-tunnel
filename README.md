@@ -1,7 +1,9 @@
 
 # wa-tunnel - HTTP Tunneling through Whatsapp
  
- This is a [Baileys](https://github.com/adiwajshing/Baileys) based piece of code that lets you tunnel TCP data through two Whatsapp accounts. This can be usable in different situations, for example network carriers that give unlimited whatsapp data or airplanes where you also get unlimited social network data.
+ This is a [Baileys](https://github.com/adiwajshing/Baileys) based piece of code that lets you tunnel TCP data through two Whatsapp accounts. 
+
+ This can be usable in different situations, for example network carriers that give unlimited whatsapp data or airplanes where you also get unlimited social network data.
 
  It's using Baileys since it's a WS based multi-device whatsapp library and therefore could be used in android in the future, using Termux for example.
 
