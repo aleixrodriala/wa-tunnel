@@ -45,10 +45,13 @@ Or you can use a normal proxy server like follows:
 For example
 
     node client.js 8080 1234567890
+
 ## Usage
 The first time you open the script Baileys will ask you to scan the QR code with the whatsapp app, after that the session is saved for later usage.
 
 It may crash, that's normal after that just restart the script and you will have your client/server ready!
+
+It splits network packages to not get timed out by WhatsApp, at the moment it's hardcoded in **wasocket.js**, by default it's limited at 20k characters per message, I have done multiple tests and anything below that may get you banned for sending too many messages and any above 80k may timeout. 
 
 Once you have both client and server ready you can test using curl and see the magic happen.
 
@@ -59,9 +62,13 @@ With the example commands would be:
     curl -v -x localhost:8080 https://httpbin.org/ip
 It has been tested also with a normal browser like Firefox, it's slow but can be used.
 
+
+## Disclaimer
+Using this library may get your WhatsApp account banned, use with a temporal number or at your own risk.
+
 ## TO-DO
--Make an Android script to install node dependencies on termux
--Documentation
+- Make an Android script to install node dependencies on termux
+- Documentation
 
 ## License
 
