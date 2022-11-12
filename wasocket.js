@@ -45,6 +45,9 @@ const sendData = async(waSock, data, socketNumber, remoteNum) => {
             statusCode = "f" //Full (no chunks)
         }
         socksNumber[socketNumber] += 1;
+
+        // Should await sendMessage but gets too slow because syncs messages on both clients
+
         waSock.sendMessage(remoteNum, { text: statusCode + '-' + socksNumber[socketNumber] + '-' + socketNumber + '-' + chunk})
     }
     await delay(500)
