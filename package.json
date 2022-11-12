@@ -1,0 +1,23 @@
+{
+  "name": "wa-tunnel",
+  "version": "1.0.0",
+  "description": "Tunneling internet traffic through WhatsApp",
+  "main": "client.js",
+  "scripts": {
+    "test": "node client.js 8080 12345678901",
+    "start": "node server.js"
+  },
+  "keywords": [
+    "whatsapp",
+    "tunneling",
+    "dnstunneling",
+    "freeinternet"
+  ],
+  "author": "aleixrodriala",
+  "license": "ISC",
+  "dependencies": {
+    "@adiwajshing/baileys": "^4.4.0",
+    "qrcode-terminal": "^0.12.0",
+    "uint8-to-base64": "^0.2.0"
+  }
+}
