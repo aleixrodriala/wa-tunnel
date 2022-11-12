@@ -1,7 +1,7 @@
 
 # wa-tunnel - HTTP Tunneling through Whatsapp
 
-![](https://i.imgur.com/YqYYJ8O.gif)
+![](https://i.imgur.com/fi9XKCo.gif)
  
  This is a [Baileys](https://github.com/adiwajshing/Baileys) based piece of code that lets you tunnel TCP data through two Whatsapp accounts. 
 
