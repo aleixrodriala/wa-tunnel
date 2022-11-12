@@ -1,7 +1,7 @@
 
 # wa-tunnel - HTTP Tunneling through Whatsapp
 
-![](https://i.imgur.com/fi9XKCo.gif)
+![](https://i.imgur.com/EWjlQyz.gif)
  
  This is a [Baileys](https://github.com/adiwajshing/Baileys) based piece of code that lets you tunnel TCP data through two Whatsapp accounts. 
 
@@ -9,14 +9,14 @@
 
  It's using Baileys since it's a WS based multi-device whatsapp library and therefore could be used in android in the future, using Termux for example.
 
- The idea is to use it with a proxy setup on the server like this: [Client (restricted access) -> Whatsapp -> Server (proxy) -> Internet]
+ The idea is to use it with a proxy setup on the server like this: [Client (restricted access) -> Whatsapp -> Server -> Proxy -> Internet]
 
  Apologizes in advance since Javascript it's not one of my primary coding languages :/
 
  Use only for educational purpose.
 
 # Why?
- While travelling through South America network data on carriers is usually restricted to not many GBs but WhatsApp is usually unlimited, I tried to create this library since I didn't find any usable at the date.
+ I got the idea While travelling through South America network data on carriers is usually restricted to not many GBs but WhatsApp is usually unlimited, I tried to create this library since I didn't find any usable at the date.
 # Setup
  You must have access to two Whatsapp accounts, one for the server and one for the client.
 
@@ -46,6 +46,7 @@ Or you can use a normal proxy server like follows:
  Then you can start the server with the following command where **port** is the local port where you will connect and **number** is the server WhatsApp number with the country code alltogether and without +.
  
     node client.js port number
+
 For example
 
     node client.js 8080 1234567890
@@ -65,6 +66,14 @@ With the example commands would be:
 
     curl -v -x localhost:8080 https://httpbin.org/ip
 It has been tested also with a normal browser like Firefox, it's slow but can be used.
+
+You can also forward other protocol ports like SSH by setting up the server like this:
+
+    node server.js localhost 3128 12345678901
+
+And then connect to the server by using in the client:
+    
+    ssh root@localhost -p 8080
 
 
 ## Disclaimer
