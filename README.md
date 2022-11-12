@@ -7,6 +7,8 @@
 
  The idea is to use it with a proxy setup on the server like this: [Client (restricted access) -> Whatsapp -> Server (proxy) -> Internet]
 
+ Apologizes in advance since Javascript it's not one of my primary coding languages :/
+
  Use only for educational purpose.
 
 # Why?
@@ -32,7 +34,7 @@
 
  Then you can start the server with the following command where **port** is the local port where you will connect and **number** is the server WhatsApp number.
  
-    node server.js host port number
+    node client.js port number
     
 ## Usage
 The first time you open the script Baileys will ask you to scan the QR code with the whatsapp app, after that the session is saved for later usage.
