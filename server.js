@@ -13,11 +13,11 @@ const sockets = {};
 
 const callback = (socketNumber, decryptedText) => {
     if (!sockets[socketNumber]){
-	    console.log(`Socket NOT In list -> {socketNumber}`)
+	    console.log(`Socket NOT In list -> ${socketNumber}`)
 	    var client = new net.Socket();
 
 	    client.connect(proxyPort, proxyHost, function() {
-	        console.log(`STARTED Connection -> {socketNumber}`);
+	        console.log(`STARTED Connection -> ${socketNumber}`);
 	        client.write(decryptedText);
 	    });
 
