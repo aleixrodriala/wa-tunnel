@@ -69,7 +69,7 @@ It has been tested also with a normal browser like Firefox, it's slow but can be
 
 You can also forward other protocol ports like SSH by setting up the server like this:
 
-    node server.js localhost 3128 12345678901
+    node server.js localhost 22 12345678901
 
 And then connect to the server by using in the client:
     
