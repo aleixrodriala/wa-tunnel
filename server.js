@@ -1,4 +1,4 @@
-const {startSock, sendData} = require('./common.js');
+const {startSock, sendData} = require('./wasocket.js');
 const net = require('net');
 
 if (process.argv.length != 5) {
