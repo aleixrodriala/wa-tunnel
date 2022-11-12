@@ -5,8 +5,7 @@
 
  It's using Baileys since it's a WS based multi-device whatsapp library and therefore could be used in android in the future, using Termux for example.
 
- The idea is to use it with a proxy setup on the server like this: 
- [Client (restricted access) -> Whatsapp -> Server (proxy) -> Internet]
+ The idea is to use it with a proxy setup on the server like this: [Client (restricted access) -> Whatsapp -> Server (proxy) -> Internet]
 
  Use only for educational purpose.
 
