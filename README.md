@@ -68,7 +68,7 @@ It has been tested also with a normal browser like Firefox, it's slow but can be
 
 
 ## Disclaimer
-Using this library may get your WhatsApp account banned, use with a temporal number or at your own risk.
+Using this library may get your WhatsApp account banned, use with a temporary number or at your own risk.
 
 ## TO-DO
 - Make an Android script to install node dependencies on termux
