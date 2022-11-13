@@ -82,7 +82,7 @@ Using this library may get your WhatsApp account banned, use with a temporary nu
 ## TO-DO
 - Make an Android script to install node dependencies on termux
 - When Baileys supports calls, implement package sending through calls
-- Try sending and editing messages instead of just sending messages all the time to avoid bans
+- Implement sending files for big data packages to reduce messages and maybe improve speed
 - Documentation
 
 ## License
