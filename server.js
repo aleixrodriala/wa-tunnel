@@ -1,13 +1,32 @@
 const {startSock, sendData} = require('./wasocket.js');
 const net = require('net');
 
-if (process.argv.length != 5) {
-  console.log("usage: server.js <proxyhost> <proxyPort> <client-wa-num>");
-  process.exit();
-}
-const proxyHost = process.argv[2];
-const proxyPort = process.argv[3];
-const clientNum = `${process.argv[4]}@s.whatsapp.net`;
+const yargs = require('yargs/yargs');
+const { hideBin } = require('yargs/helpers');
+
+const argv = yargs(hideBin(process.argv))
+  .command('$0 <proxy-host> <proxy-port> <client-wa-num> [disable-files]', 'Start a wa-tunnel server listening on <localport>', (yargs) => {
+      yargs
+        .positional('local-port', {
+          describe: 'Port to be forwarded',
+          demandOption: true,
+        })
+        .positional('client-wa-num', {
+          describe: 'Client WhatsApp number following this format: 12345678901',
+          demandOption: true,
+        })
+        .option('disable-files', {
+          description: 'Disable sending WhatsApp files to reduce the amount of messages (sometimes not allowed)',
+          default: false,
+          type: 'boolean'
+        })
+        .version(false)
+  }).parse()
+
+const proxyHost = argv.proxyHost;
+const proxyPort = argv.proxyPort;
+const clientNum = `${argv.clientWaNum}@s.whatsapp.net`;
+var disableFiles = argv.disableFiles;
 
 const sockets = {};
 
@@ -25,7 +44,7 @@ const callback = (socketNumber, decryptedText) => {
 
 	    client.on('data', async function(data) {
 	    	client.pause()
-	    	await sendData(waSock, data, socketNumber, clientNum, true)
+	    	await sendData(waSock, data, socketNumber, clientNum, disableFiles)
 	    	client.resume()
 	    });
 
