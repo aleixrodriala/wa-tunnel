@@ -58,7 +58,7 @@ It may crash, that's normal after that just restart the script and you will have
 
 It splits network packages to not get timed out by WhatsApp, at the moment it's hardcoded in **wasocket.js**, by default it's limited at 20k characters per message, I have done multiple tests and anything below that may get you banned for sending too many messages and any above 80k may timeout. 
 
-Now it also **sends files** and uses brotli compression on them to send data faster and reduce the amount of messages. In case you are not allowed to send files use the `--disable-files` flag to disable this functionality.
+Now it also **sends files** and uses brotli compression on them to send data faster and reduce the amount of messages. In case you are not allowed to send files use the `--disable-files` flag when starting the server and client to disable this functionality.
 
 Once you have both client and server ready you can test using curl and see the magic happen.
 
