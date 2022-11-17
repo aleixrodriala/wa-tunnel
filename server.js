@@ -16,6 +16,8 @@ const callback = (socketNumber, decryptedText) => {
 	    console.log(`Socket NOT In list -> ${socketNumber}`)
 	    var client = new net.Socket();
 
+	    client.setNoDelay(true);
+
 	    client.connect(proxyPort, proxyHost, function() {
 	        console.log(`STARTED Connection -> ${socketNumber}`);
 	        client.write(decryptedText);

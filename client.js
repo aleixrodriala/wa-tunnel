@@ -29,7 +29,10 @@ waSock = startSock(remoteNum, callback, "client");
 
 const sockFunc = (sock) => {
     console.log(`CONNECTED -> ${sock.remotePort}`);
+
     sockets[sock.remotePort] = sock;
+
+    sock.setNoDelay(true)
 
     console.log(`ACTIVE SOCKETS -> ${Object.keys(sockets)}`);
 

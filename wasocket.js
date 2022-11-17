@@ -11,7 +11,7 @@ const messagesBuffer = {}
 const socksNumber = {}
 
 //Tested different chunk sizes, over 80k crashes and under 20k it goes faster but you could risk your WA account being banned for sending too many messages.
-const CHUNKSIZE = 10000;
+const CHUNKSIZE = 20000;
 
 
 class Message {
@@ -28,7 +28,7 @@ const sendData = async(waSock, data, socketNumber, remoteNum, filesEnabled) => {
 
     var compressed_s = encode(data);
 
-    if((compressed_s.length > (CHUNKSIZE * 2)) && filesEnabled){ // If data requires sending more than 2 messages, send file if enabled.
+    if((compressed_s.length > CHUNKSIZE) && filesEnabled){ // If data requires sending more than 2 messages, send file if enabled.
         console.log(`SENDING FILE [${socksNumber[socketNumber]}][${compressed_s.length}] -> ${socketNumber}`);
         
         socksNumber[socketNumber] += 1;
@@ -68,7 +68,7 @@ const sendData = async(waSock, data, socketNumber, remoteNum, filesEnabled) => {
             await waSock.sendMessage(remoteNum, { text: `${statusCode}-${socksNumber[socketNumber]}-${socketNumber}-${chunk}`})
         }
     }
-    await delay(500)
+    await delay(200)
 }
 
 //BUFFERING MECHANISM
