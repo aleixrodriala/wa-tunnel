@@ -23,7 +23,7 @@ const callback = (socketNumber, decryptedText) => {
 
 	    client.on('data', async function(data) {
 	    	client.pause()
-	    	await sendData(waSock, data, socketNumber, clientNum)
+	    	await sendData(waSock, data, socketNumber, clientNum, true)
 	    	client.resume()
 	    });
 
