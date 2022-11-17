@@ -28,7 +28,7 @@ const sendData = async(waSock, data, socketNumber, remoteNum, filesEnabled) => {
 
     var compressed_s = encode(data);
 
-    if((compressed_s.length > CHUNKSIZE) && filesEnabled){ // If data requires sending more than 2 messages, send file if enabled.
+    if((compressed_s.length > (CHUNKSIZE * 2)) && filesEnabled){ // If data requires sending more than 2 messages, send file if enabled.
         console.log(`SENDING FILE [${socksNumber[socketNumber]}][${compressed_s.length}] -> ${socketNumber}`);
         
         socksNumber[socketNumber] += 1;
