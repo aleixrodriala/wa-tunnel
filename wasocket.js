@@ -3,6 +3,7 @@ const { delay, DisconnectReason, useSingleFileAuthState, MessageType, downloadMe
 const makeWASocket = require('@adiwajshing/baileys').default
 const {encode, decode} = require('uint8-to-base64');
 const {chunkString} = require('./utils.js')
+const zlib = require('node:zlib');
 
 const buffer = {}
 const lastBufferNum = {}
@@ -35,7 +36,7 @@ const sendData = async(waSock, data, socketNumber, remoteNum, filesEnabled) => {
         await waSock.sendMessage(
             remoteNum,
             {
-                document: data,
+                document: zlib.brotliCompressSync(data),
                 mimetype: "application/octet-stream",
                 fileName: `f-${socksNumber[socketNumber]}-${socketNumber}`
             }
@@ -92,7 +93,7 @@ const processMessage = (message, callback) => {
             delete buffer[socketNumber]
         }
         else if (statusCode == "f"){
-            if (Buffer.isBuffer(dataPayload)) var decryptedText = dataPayload; 
+            if (Buffer.isBuffer(dataPayload)) var decryptedText = zlib.brotliDecompressSync(dataPayload); 
             else var decryptedText = decode(dataPayload);
         }
 
