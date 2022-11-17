@@ -1,5 +1,5 @@
 
-# wa-tunnel - HTTP Tunneling through Whatsapp
+# wa-tunnel - TCP Tunneling through Whatsapp
 
 ![](https://i.imgur.com/EWjlQyz.gif)
  
@@ -58,6 +58,8 @@ It may crash, that's normal after that just restart the script and you will have
 
 It splits network packages to not get timed out by WhatsApp, at the moment it's hardcoded in **wasocket.js**, by default it's limited at 20k characters per message, I have done multiple tests and anything below that may get you banned for sending too many messages and any above 80k may timeout. 
 
+Now it also **sends files** and uses brotli compression on them to send data faster and reduce the amount of messages. In case you are not allowed to send files use the `--disable-files` flag to disable this functionality when starting client and server.
+
 Once you have both client and server ready you can test using curl and see the magic happen.
 
     curl -v -x proxyHost:proxyPort https://httpbin.org/ip
@@ -82,7 +84,8 @@ Using this library may get your WhatsApp account banned, use with a temporary nu
 ## TO-DO
 - Make an Android script to install node dependencies on termux
 - When Baileys supports calls, implement package sending through calls
-- Implement sending files for big data packages to reduce messages and maybe improve speed
+- ~~Implement sending files for big data packages to reduce messages and maybe improve speed~~
+- Cache socket responses to reduce even further the amount of messages sent
 - Documentation
 
 ## License

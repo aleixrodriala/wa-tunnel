@@ -23,12 +23,14 @@ class Message {
   }
 }
 
-const sendData = async(waSock, data, socketNumber, remoteNum, filesEnabled) => {
+const sendData = async(waSock, data, socketNumber, remoteNum, filesDisabled) => {
     if (!socksNumber[socketNumber]) socksNumber[socketNumber] = 0;
 
     var compressed_s = encode(data);
 
-    if((compressed_s.length > CHUNKSIZE) && filesEnabled){ // If data requires sending more than 2 messages, send file if enabled.
+    await waSock.presenceSubscribe(remoteNum) //Subscribing in order to send the messages faster
+
+    if((compressed_s.length > CHUNKSIZE) && !filesDisabled){ // If data requires sending more than 1 message, send file if enabled.
         console.log(`SENDING FILE [${socksNumber[socketNumber]}][${compressed_s.length}] -> ${socketNumber}`);
         
         socksNumber[socketNumber] += 1;
@@ -46,8 +48,6 @@ const sendData = async(waSock, data, socketNumber, remoteNum, filesEnabled) => {
         var chunks = chunkString(compressed_s, CHUNKSIZE); // Splitting string to not get timeout or connection close from Whatsapp.
 
         var statusCode;
-
-        await waSock.presenceSubscribe(remoteNum) //Subscribing in order to send the messages faster
 
         for (const [index, chunk] of chunks.entries()) {
             console.log(`SENDING [${socksNumber[socketNumber]}][${(index+1)}/${chunks.length}][${chunk.length}] -> ${socketNumber}`);
