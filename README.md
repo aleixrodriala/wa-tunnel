@@ -1,5 +1,5 @@
 
-# wa-tunnel - HTTP Tunneling through Whatsapp
+# wa-tunnel - TCP Tunneling through Whatsapp
 
 ![](https://i.imgur.com/EWjlQyz.gif)
  
