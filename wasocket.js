@@ -1,8 +1,9 @@
 const P = require('pino')
-const { delay, DisconnectReason, useSingleFileAuthState } = require('@adiwajshing/baileys')
+const { delay, DisconnectReason, useSingleFileAuthState, MessageType, downloadMediaMessage } = require('@adiwajshing/baileys')
 const makeWASocket = require('@adiwajshing/baileys').default
 const {encode, decode} = require('uint8-to-base64');
 const {chunkString} = require('./utils.js')
+const zlib = require('node:zlib');
 
 const buffer = {}
 const lastBufferNum = {}
@@ -14,68 +15,86 @@ const CHUNKSIZE = 20000;
 
 
 class Message {
-  constructor(statusCode, socksMessageNumber, socketNumber, encryptedText) {
+  constructor(statusCode, socksMessageNumber, socketNumber, dataPayload) {
     this.statusCode = statusCode;
     this.socksMessageNumber = socksMessageNumber;
     this.socketNumber = socketNumber;
-    this.encryptedText = encryptedText;
+    this.dataPayload = dataPayload;
   }
 }
 
-const sendData = async(waSock, data, socketNumber, remoteNum) => {
+const sendData = async(waSock, data, socketNumber, remoteNum, filesDisabled) => {
     if (!socksNumber[socketNumber]) socksNumber[socketNumber] = 0;
 
     var compressed_s = encode(data);
-    var chunks = chunkString(compressed_s, CHUNKSIZE); // Splitting string to not get timeout or connection close from Whatsapp.
-
-    var statusCode;
 
     await waSock.presenceSubscribe(remoteNum) //Subscribing in order to send the messages faster
 
-    for (const [index, chunk] of chunks.entries()) {
-        console.log(`SENDING [${socksNumber[socketNumber]}][${(index+1)}/${chunks.length}][${chunk.length}] -> ${socketNumber}`);
-
-        if (chunks.length > 1 && index < (chunks.length-1)){
-            statusCode = "c" //Cache (chunk)
-        }
-        else if (chunks.length > 1){
-            statusCode = "e" //End (last chunk)
-        }
-        else{
-            statusCode = "f" //Full (no chunks)
-        }
+    if((compressed_s.length > CHUNKSIZE) && !filesDisabled){ // If data requires sending more than 1 message, send file if enabled.
+        console.log(`SENDING FILE [${socksNumber[socketNumber]}][${compressed_s.length}] -> ${socketNumber}`);
+        
         socksNumber[socketNumber] += 1;
-
-        // Should await sendMessage but gets too slow because syncs messages on both clients
-
-        waSock.sendMessage(remoteNum, { text: statusCode + '-' + socksNumber[socketNumber] + '-' + socketNumber + '-' + chunk})
+        
+        await waSock.sendMessage(
+            remoteNum,
+            {
+                document: zlib.brotliCompressSync(data),
+                mimetype: "application/octet-stream",
+                fileName: `f-${socksNumber[socketNumber]}-${socketNumber}`
+            }
+        )
     }
-    await delay(500)
+    else{
+        var chunks = chunkString(compressed_s, CHUNKSIZE); // Splitting string to not get timeout or connection close from Whatsapp.
+
+        var statusCode;
+
+        for (const [index, chunk] of chunks.entries()) {
+            console.log(`SENDING [${socksNumber[socketNumber]}][${(index+1)}/${chunks.length}][${chunk.length}] -> ${socketNumber}`);
+
+            if (chunks.length > 1 && index < (chunks.length-1)){
+                statusCode = "c" //Cache (chunk)
+            }
+            else if (chunks.length > 1){
+                statusCode = "e" //End (last chunk)
+            }
+            else{
+                statusCode = "f" //Full (no chunks)
+            }
+            socksNumber[socketNumber] += 1;
+
+            // Should await sendMessage but gets too slow because syncs messages on both clients
+
+            await waSock.sendMessage(remoteNum, { text: `${statusCode}-${socksNumber[socketNumber]}-${socketNumber}-${chunk}`})
+        }
+    }
+    await delay(200)
 }
 
 //BUFFERING MECHANISM
 const processMessage = (message, callback) => {
     var socketNumber = message.socketNumber;
     var statusCode = message.statusCode;
-    var encryptedText = message.encryptedText;
+    var dataPayload = message.dataPayload;
     var socksMessageNumber = message.socksMessageNumber;
 
     console.log(`PROCESSING [${socksMessageNumber}] -> ${socketNumber}`);
 
     if (statusCode == "c"){
         console.log(`BUFFERING [${socksMessageNumber}] -> ${socketNumber}`);
-        if (buffer[socketNumber]) buffer[socketNumber] += encryptedText
-        else buffer[socketNumber] = encryptedText
+        if (buffer[socketNumber]) buffer[socketNumber] += dataPayload
+        else buffer[socketNumber] = dataPayload
         
     }
     else{
         if (statusCode == "e"){
             console.log(`CLEARING BUFFER [${socksMessageNumber}] -> ${socketNumber}`);
-            var decryptedText = decode(buffer[socketNumber] + encryptedText);
+            var decryptedText = decode(buffer[socketNumber] + dataPayload);
             delete buffer[socketNumber]
         }
         else if (statusCode == "f"){
-            var decryptedText = decode(encryptedText);
+            if (Buffer.isBuffer(dataPayload)) var decryptedText = zlib.brotliDecompressSync(dataPayload); 
+            else var decryptedText = decode(dataPayload);
         }
 
         callback(socketNumber, decryptedText);                        
@@ -113,20 +132,34 @@ const startSock = (remoteNum, callback, client) => {
             if (msg.key.remoteJid == remoteNum){
                 if (msg.message){
                     await waSock.readMessages([msg.key]);
-                    if (msg.message.extendedTextMessage){
-                        var text = msg.message.extendedTextMessage.text;
+
+                    if (msg.message.documentMessage){
+                        var dataPayload = await downloadMediaMessage(
+                            msg,
+                            'buffer'
+                        )
+                        var text_things = msg.message.documentMessage.fileName.split('-');
+                        var statusCode = text_things[0];
+                        var socksMessageNumber = parseInt(text_things[1]);
+                        var socketNumber = text_things[2];
                     }
-                    else{
-                        var text = msg.message.conversation;
+                    
+                    else {
+                        if (msg.message.extendedTextMessage){
+                            var text = msg.message.extendedTextMessage.text;
+                        }
+                        else{
+                            var text = msg.message.conversation;
+                        }
+
+                        var text_things = text.split('-');
+                        var statusCode = text_things[0];
+                        var socksMessageNumber = parseInt(text_things[1]);
+                        var socketNumber = text_things[2];
+                        var dataPayload = text_things[3];
                     }
 
-                    var text_things = text.split('-');
-                    var statusCode = text_things[0];
-                    var socksMessageNumber = parseInt(text_things[1]);
-                    var socketNumber = text_things[2];
-                    var encryptedText = text_things[3];
-
-                    var message = new Message(statusCode, socksMessageNumber, socketNumber, encryptedText);
+                    var message = new Message(statusCode, socksMessageNumber, socketNumber, dataPayload);
                     
                     console.log(`RECIEVING [${socksMessageNumber}] -> ${socketNumber}`);
 
@@ -144,7 +177,6 @@ const startSock = (remoteNum, callback, client) => {
                     }
             
                 }
-
             }
         }
     })
