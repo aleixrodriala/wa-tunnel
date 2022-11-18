@@ -29,23 +29,33 @@ const clientNum = `${argv.clientWaNum}@s.whatsapp.net`;
 var disableFiles = argv.disableFiles;
 
 const sockets = {};
+const cacheRequests = {};
+const cacheTimers = {}
+
+const DELIMITER = new Uint8Array([255,255,255,255,255]);
+
+const sendCachedData = async function (waSock, socketNumber, clientNum, disableFiles) {
+	var cachedRequests = cacheRequests[socketNumber];
+	delete cacheRequests[socketNumber];
+	await sendData(waSock, cachedRequests, socketNumber, clientNum, disableFiles)
+}
 
 const callback = (socketNumber, decryptedText) => {
     if (!sockets[socketNumber]){
 	    console.log(`Socket NOT In list -> ${socketNumber}`)
 	    var client = new net.Socket();
 
-	    client.setNoDelay(true);
-
 	    client.connect(proxyPort, proxyHost, function() {
 	        console.log(`STARTED Connection -> ${socketNumber}`);
 	        client.write(decryptedText);
 	    });
 
-	    client.on('data', async function(data) {
-	    	client.pause()
-	    	await sendData(waSock, data, socketNumber, clientNum, disableFiles)
-	    	client.resume()
+	    client.on('data', function(data) {
+	    	console.log(`RECEIVING DATA [${data.length}] -> ${socketNumber}`);
+		    if (cacheTimers[socketNumber]) clearTimeout(cacheTimers[socketNumber]);
+		    if (!cacheRequests[socketNumber]) cacheRequests[socketNumber] = data;
+		    else cacheRequests[socketNumber] = Buffer.concat([cacheRequests[socketNumber], DELIMITER, data]);
+		    cacheTimers[socketNumber] = setTimeout(sendCachedData, 300, waSock, socketNumber, clientNum, disableFiles);
 	    });
 
 	    client.on('end', function() {

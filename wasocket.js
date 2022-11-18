@@ -2,7 +2,7 @@ const P = require('pino')
 const { delay, DisconnectReason, useSingleFileAuthState, MessageType, downloadMediaMessage } = require('@adiwajshing/baileys')
 const makeWASocket = require('@adiwajshing/baileys').default
 const {encode, decode} = require('uint8-to-base64');
-const {chunkString} = require('./utils.js')
+const {chunkString, splitBuffer} = require('./utils.js')
 const zlib = require('node:zlib');
 
 const buffer = {}
@@ -12,6 +12,7 @@ const socksNumber = {}
 
 //Tested different chunk sizes, over 80k crashes and under 20k it goes faster but you could risk your WA account being banned for sending too many messages.
 const CHUNKSIZE = 20000;
+const DELIMITER = new Uint8Array([255,255,255,255,255]);
 
 
 class Message {
@@ -90,14 +91,27 @@ const processMessage = (message, callback) => {
         if (statusCode == "e"){
             console.log(`CLEARING BUFFER [${socksMessageNumber}] -> ${socketNumber}`);
             var decryptedText = decode(buffer[socketNumber] + dataPayload);
-            delete buffer[socketNumber]
+            delete buffer[socketNumber];
+            multi = true; //use indexOfmulti to split buffer when --disable-files enabled
         }
         else if (statusCode == "f"){
-            if (Buffer.isBuffer(dataPayload)) var decryptedText = zlib.brotliDecompressSync(dataPayload); 
-            else var decryptedText = decode(dataPayload);
+            if (Buffer.isBuffer(dataPayload)) { //coming from file
+                var decryptedText = zlib.brotliDecompressSync(dataPayload);
+                var multi = false; //use indexOf to split buffer
+            }
+            else {
+                var decryptedText = decode(dataPayload);
+                var multi = true; //use indexOfmulti to split buffer
+            } 
         }
 
-        callback(socketNumber, decryptedText);                        
+        var messages = splitBuffer(decryptedText, DELIMITER, multi);
+
+        console.log(`RECIEVING [${messages.length}] MESSAGES -> ${socketNumber}`)
+
+        for (const message of messages){
+            callback(socketNumber, message);
+        }
     }
 
     lastBufferNum[socketNumber] = socksMessageNumber;
