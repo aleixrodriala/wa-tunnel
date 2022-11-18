@@ -91,25 +91,27 @@ const processMessage = (message, callback) => {
         if (statusCode == "e"){
             console.log(`CLEARING BUFFER [${socksMessageNumber}] -> ${socketNumber}`);
             var decryptedText = decode(buffer[socketNumber] + dataPayload);
-            delete buffer[socketNumber]
+            delete buffer[socketNumber];
+            multi = true; //use indexOfmulti to split buffer when --disable-files enabled
         }
         else if (statusCode == "f"){
-            if (Buffer.isBuffer(dataPayload)) var decryptedText = zlib.brotliDecompressSync(dataPayload); 
-            else var decryptedText = decode(dataPayload);
+            if (Buffer.isBuffer(dataPayload)) { //coming from file
+                var decryptedText = zlib.brotliDecompressSync(dataPayload);
+                var multi = false; //use indexOf to split buffer
+            }
+            else {
+                var decryptedText = decode(dataPayload);
+                var multi = true; //use indexOfmulti to split buffer
+            } 
         }
 
-        if (decryptedText.includes(DELIMITER)){
-            console.log('MULTIPLE MESSAGES FOUND')
-            var messages = splitBuffer(decryptedText, DELIMITER);
-            for (const message of messages){
-                console.log(message.length)
-                callback(socketNumber, message);
-            }
+        var messages = splitBuffer(decryptedText, DELIMITER, multi);
+
+        console.log(`RECIEVING [${messages.length}] MESSAGES -> ${socketNumber}`)
+
+        for (const message of messages){
+            callback(socketNumber, message);
         }
-        else{
-            callback(socketNumber, decryptedText);
-        }
-        
     }
 
     lastBufferNum[socketNumber] = socksMessageNumber;

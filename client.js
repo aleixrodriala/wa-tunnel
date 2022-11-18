@@ -49,8 +49,6 @@ const sockFunc = (sock) => {
 
     sockets[sock.remotePort] = sock;
 
-    sock.setNoDelay(true)
-
     console.log(`ACTIVE SOCKETS -> ${Object.keys(sockets)}`);
 
     sock.on('data', async function(data) {
