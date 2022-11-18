@@ -14,7 +14,7 @@
 
  Use only for educational purpose.
 
-# How it works?
+## How it works?
 It splits network packages to not get timed out by WhatsApp, at the moment it's hardcoded in **wasocket.js**, by default it's limited at 20k characters per message, I have done multiple tests and anything below that may get you banned for sending too many messages and any above 80k may timeout. 
 
 Now it **caches responses** to group them and send the maximum amount of data in a message therefore reducing the amount of messages. It also **sends files** using **brotli** compression on them to send even more data in fewer messages. So if a network package is over the limit (20k chars by default) it will be sent as a file. Also if multiple network packages are cached it will use the same cryteria.
@@ -33,7 +33,7 @@ After: (with files and response caching)
 
 In case you are not allowed to send files use the `--disable-files` flag when starting the server and client to disable this functionality.
 
-# Why?
+## Why?
  I got the idea While travelling through South America network data on carriers is usually restricted to not many GBs but WhatsApp is usually unlimited, I tried to create this library since I didn't find any usable at the date.
  
 # Setup
@@ -92,11 +92,20 @@ And then connect to the server by using in the client:
     
     ssh root@localhost -p 8080
 
+## Usage on Android
+To use on Android, you can use it with [Termux](https://play.google.com/store/apps/details?id=com.termux) using the following commands:
+
+    pkg update && pkg upgrade
+    pkg install git nodejs -y
+    git clone https://github.com/aleixrodriala/wa-tunnel.git
+    cd wa-tunnel
+    node install
+
 ## Disclaimer
 Using this library may get your WhatsApp account banned, use with a temporary number or at your own risk.
 
 ## TO-DO
-- Make an Android script to install node dependencies on termux
+- ~~Make an Android script to install node dependencies on termux~~
 - When Baileys supports calls, implement package sending through calls
 - ~~Implement sending files for big data packages to reduce messages and maybe improve speed~~
 - ~~Cache socket responses to reduce even further the amount of messages sent~~

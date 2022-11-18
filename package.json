@@ -4,8 +4,7 @@
   "description": "Tunneling internet traffic through WhatsApp",
   "main": "client.js",
   "scripts": {
-    "test": "node client.js 8080 12345678901",
-    "start": "node server.js"
+    "test": "node client.js 8080 12345678901"
   },
   "keywords": [
     "whatsapp",
