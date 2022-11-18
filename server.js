@@ -29,6 +29,15 @@ const clientNum = `${argv.clientWaNum}@s.whatsapp.net`;
 var disableFiles = argv.disableFiles;
 
 const sockets = {};
+const cacheRequests = {};
+const cacheTimers = {}
+
+const DELIMITER = new Uint8Array([255,255,255,255,255]);
+
+const sendCachedData = async function (waSock, socketNumber, clientNum, disableFiles) {
+	await sendData(waSock, cacheRequests[socketNumber], socketNumber, clientNum, disableFiles)
+	delete cacheRequests[socketNumber];
+}
 
 const callback = (socketNumber, decryptedText) => {
     if (!sockets[socketNumber]){
@@ -42,10 +51,14 @@ const callback = (socketNumber, decryptedText) => {
 	        client.write(decryptedText);
 	    });
 
-	    client.on('data', async function(data) {
-	    	client.pause()
-	    	await sendData(waSock, data, socketNumber, clientNum, disableFiles)
-	    	client.resume()
+	    client.on('data', function(data) {
+		    if (cacheTimers[socketNumber]) clearTimeout(cacheTimers[socketNumber]);
+		    if (!cacheRequests[socketNumber]) cacheRequests[socketNumber] = data;
+		    else cacheRequests[socketNumber] = Buffer.concat([cacheRequests[socketNumber], DELIMITER, data]);
+
+		    console.log('CACHING REQUESTS')
+		    console.log(data.length)
+		    cacheTimers[socketNumber] = setTimeout(sendCachedData, 200, waSock, socketNumber, clientNum, disableFiles);
 	    });
 
 	    client.on('end', function() {
