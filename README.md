@@ -14,10 +14,17 @@
 
  Use only for educational purpose.
 
-## How it works?
-It splits network packages to not get timed out by WhatsApp, at the moment it's hardcoded in **wasocket.js**, by default it's limited at 20k characters per message, I have done multiple tests and anything below that may get you banned for sending too many messages and any above 80k may timeout. 
+## How does it work?
+It sends TCP network packages through WhatsApp text and **file** messages, depending on the amount of characters it splits them into different text messages or files.
 
-Now it **caches responses** to group them and send the maximum amount of data in a message therefore reducing the amount of messages. It also **sends files** using **brotli** compression on them to send even more data in fewer messages. So if a network package is over the limit (20k chars by default) it will be sent as a file. Also if multiple network packages are cached it will use the same cryteria.
+To not get timed out by WhatsApp by default it's limited at 20k characters per message, at the moment it's hardcoded in **wasocket.js**. 
+I have done multiple tests and anything below that may get you banned for sending too many messages and any above 80k may timeout. 
+
+If a network package is over the limit (20k chars by default) it will be sent as a file if enabled. Also if multiple network packages are cached it will use the same cryteria.
+
+File messages are sent as binary files, TCP responses are concatenated with a delimiter and compressed using **brotli** to reduce data usage. 
+
+It **caches TCP socket responses** to group them and send the maximum amount of data in a message therefore reducing the amount of messages, improving the speed and reducing the probability of getting banned. 
 
 ## Performance improvements
 Before: (without files and no response caching)
