@@ -106,7 +106,7 @@ To use on Android, you can use it with [Termux](https://play.google.com/store/ap
     pkg install git nodejs -y
     git clone https://github.com/aleixrodriala/wa-tunnel.git
     cd wa-tunnel
-    node install
+    npm install
 
 ## Disclaimer
 Using this library may get your WhatsApp account banned, use with a temporary number or at your own risk.
