@@ -1,0 +1,6 @@
+const LOGGER_TYPES = {
+  INFO: 'INFO',
+  ERROR: 'ERROR'
+};
+
+exports.LOGGER_TYPES = LOGGER_TYPES;

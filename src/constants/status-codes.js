@@ -1,0 +1,7 @@
+const STATUS_CODES = {
+  END: 'END',
+  FULL: 'FULL',
+  CACHE: 'CACHE'
+};
+
+exports.STATUS_CODES = STATUS_CODES;

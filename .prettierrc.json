@@ -1,0 +1,14 @@
+{
+  "semi": true,
+  "tabWidth": 2,
+  "printWidth": 90,
+  "useTabs": false,
+  "singleQuote": true,
+  "requireConfig": false,
+  "bracketSpacing": true,
+  "trailingComma": "none",
+  "arrowParens": "always",
+  "editor.formatOnSave": true,
+  "html.format.wrapLineLength": 80,
+  "html.format.wrapAttributes": "force-expand-multiline"
+}
