@@ -3,7 +3,7 @@ const pretty = require('pino-pretty');
 
 const { LOGGER_TYPES } = require('../constants/logger-types');
 
-function logger(message, type = LOGGER_TYPES.INFO, options = {}) {
+function logger(message, type = LOGGER_TYPES.INFO, options = {}, args) {
   const stream = pretty({
     colorize: true,
     ...options
@@ -11,11 +11,11 @@ function logger(message, type = LOGGER_TYPES.INFO, options = {}) {
   const PinoLogger = pino(stream);
 
   if (type === LOGGER_TYPES.ERROR) {
-    PinoLogger.error(message);
+    PinoLogger.error(message, args);
     return;
   }
 
-  PinoLogger.info(message);
+  PinoLogger.info(message, args);
 }
 
 exports.logger = logger;

@@ -62,8 +62,7 @@ const sendData = async (waSock, data, socketNumber, remoteNum, filesDisabled) =>
 
     for (const [index, chunk] of chunks.entries()) {
       logger(
-        `SENDING [${socksNumber[socketNumber]}][${index + 1}/
-        ${chunks.length}][${chunk.length}] -> ${socketNumber}`
+        `SENDING [${socksNumber[socketNumber]}][${index + 1}/${chunks.length}][${chunk.length}] -> ${socketNumber}`
       );
 
       if (chunks.length > 1 && index < chunks.length - 1) {
@@ -180,16 +179,16 @@ const startSock = (remoteNum, callback, client) => {
             socksMessageNumber = parseInt(textThings[1]);
           } else {
             if (msg.message.extendedTextMessage) {
-              const { text } = msg.message.extendedTextMessage;
+              const text = msg.message.extendedTextMessage.text;
               textThings = text.split('-');
             } else {
               const text = msg.message.conversation;
               textThings = text.split('-');
             }
             statusCode = textThings[0];
-            dataPayload = textThings[3];
-            socketNumber = textThings[2];
             socksMessageNumber = parseInt(textThings[1]);
+            socketNumber = textThings[2];
+            dataPayload = textThings[3];    
           }
 
           const message = new Message(
@@ -240,7 +239,7 @@ const startSock = (remoteNum, callback, client) => {
         logger('connection closed', LOGGER_TYPES.ERROR);
       }
     }
-    logger('connection update', update);
+    logger('connection update ' + JSON.stringify(update));
   });
   return waSock;
 };

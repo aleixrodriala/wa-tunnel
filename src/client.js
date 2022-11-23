@@ -64,7 +64,7 @@ const sockFunc = (sock) => {
 
   sock.on('close', () => {
     delete sockets[sock.remotePort];
-    logger(`CLOSED -> ${sock.remotePort}`, LOGGER_TYPES.ERROR);
+    logger(`CLOSED -> ${sock.remotePort}`);
   });
 
   sock.on('error', (e) => {

@@ -90,7 +90,7 @@ const callback = (socketNumber, decryptedText) => {
     });
 
     client.on('end', () => {
-      logger(`CLOSED -> ${socketNumber}`, LOGGER_TYPES.ERROR);
+      logger(`CLOSED -> ${socketNumber}`);
       delete sockets[socketNumber];
     });
 
