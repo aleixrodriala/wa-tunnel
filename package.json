@@ -2,9 +2,11 @@
   "name": "wa-tunnel",
   "version": "1.0.0",
   "description": "Tunneling internet traffic through WhatsApp",
-  "main": "client.js",
   "scripts": {
-    "test": "node client.js 8080 12345678901"
+    "client": "node src/client.js",
+    "server": "node src/server.js",
+    "prettier-fix": "prettier --write **/*.js",
+    "eslint-fix": "eslint --fix **/*.js"
   },
   "keywords": [
     "whatsapp",
@@ -14,11 +16,29 @@
   ],
   "author": "aleixrodriala",
   "license": "ISC",
+  "lint-staged": {
+    "src/**/*.{js}": [
+      "prettier --write",
+      "eslint --fix"
+    ],
+    "src/**/*.{json}": "prettier --write"
+  },
   "dependencies": {
     "@adiwajshing/baileys": "^4.4.0",
     "pino": "^8.7.0",
+    "pino-pretty": "^9.1.1",
     "qrcode-terminal": "^0.12.0",
     "uint8-to-base64": "^0.2.0",
     "yargs": "^17.6.2"
+  },
+  "devDependencies": {
+    "eslint": "^8.28.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "husky": "^8.0.2",
+    "lint-staged": "^13.0.3",
+    "prettier": "^2.7.1"
   }
 }

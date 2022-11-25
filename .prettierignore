@@ -1,0 +1,8 @@
+*.svg
+*.png
+*.jpg
+
+node_modules
+# Ignore artifacts:
+build
+coverage
