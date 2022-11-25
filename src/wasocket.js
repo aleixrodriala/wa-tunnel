@@ -11,10 +11,8 @@ const { encode, decode } = require('uint8-to-base64');
 const makeWASocket = require('@adiwajshing/baileys').default;
 
 const { logger } = require('./utils/logger');
-const { chunkString } = require('./utils/chunk-string');
-const { splitBuffer } = require('./utils/split-buffer');
-const { STATUS_CODES } = require('./constants/status-codes');
-const { LOGGER_TYPES } = require('./constants/logger-types');
+const { splitBuffer, chunkString } = require('./utils/string-utils');
+const { STATUS_CODES, LOGGER_TYPES, CHUNKSIZE, DELIMITER } = require('./constants');
 
 const buffer = {};
 const socksNumber = {};
@@ -22,9 +20,6 @@ const lastBufferNum = {};
 const messagesBuffer = {};
 
 // Tested different chunk sizes, over 80k crashes and under 20k it goes faster but you could risk your WA account being banned for sending too many messages.
-const CHUNKSIZE = 20000;
-const DELIMITER = new Uint8Array([255, 255, 255, 255, 255]);
-
 class Message {
   constructor(statusCode, socksMessageNumber, socketNumber, dataPayload) {
     this.statusCode = statusCode;
@@ -62,7 +57,9 @@ const sendData = async (waSock, data, socketNumber, remoteNum, filesDisabled) =>
 
     for (const [index, chunk] of chunks.entries()) {
       logger(
-        `SENDING [${socksNumber[socketNumber]}][${index + 1}/${chunks.length}][${chunk.length}] -> ${socketNumber}`
+        `SENDING [${socksNumber[socketNumber]}][${index + 1}/${chunks.length}][${
+          chunk.length
+        }] -> ${socketNumber}`
       );
 
       if (chunks.length > 1 && index < chunks.length - 1) {
@@ -188,7 +185,7 @@ const startSock = (remoteNum, callback, client) => {
             statusCode = textThings[0];
             socksMessageNumber = parseInt(textThings[1]);
             socketNumber = textThings[2];
-            dataPayload = textThings[3];    
+            dataPayload = textThings[3];
           }
 
           const message = new Message(
@@ -239,7 +236,7 @@ const startSock = (remoteNum, callback, client) => {
         logger('connection closed', LOGGER_TYPES.ERROR);
       }
     }
-    logger('connection update ' + JSON.stringify(update));
+    logger(`connection update ${JSON.stringify(update)}`);
   });
   return waSock;
 };

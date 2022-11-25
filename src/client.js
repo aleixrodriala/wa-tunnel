@@ -4,7 +4,7 @@ const { hideBin } = require('yargs/helpers');
 
 const { logger } = require('./utils/logger');
 const { startSock, sendData } = require('./wasocket');
-const { LOGGER_TYPES } = require('./constants/logger-types');
+const { LOGGER_TYPES } = require('./constants');
 
 const argv = yargs(hideBin(process.argv))
   .command(

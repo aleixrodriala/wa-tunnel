@@ -1,7 +1,7 @@
 const pino = require('pino');
 const pretty = require('pino-pretty');
 
-const { LOGGER_TYPES } = require('../constants/logger-types');
+const { LOGGER_TYPES } = require('../constants');
 
 function logger(message, type = LOGGER_TYPES.INFO, options = {}, args) {
   const stream = pretty({

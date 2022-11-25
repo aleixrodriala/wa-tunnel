@@ -4,7 +4,7 @@ const { hideBin } = require('yargs/helpers');
 
 const { logger } = require('./utils/logger');
 const { startSock, sendData } = require('./wasocket');
-const { LOGGER_TYPES } = require('./constants/logger-types');
+const { LOGGER_TYPES, DELIMITER } = require('./constants');
 
 const argv = yargs(hideBin(process.argv))
   .command(
@@ -40,7 +40,6 @@ const { proxyHost } = argv;
 const { proxyPort } = argv;
 const { disableFiles } = argv;
 const clientNum = `${argv.clientWaNum}@s.whatsapp.net`;
-const DELIMITER = new Uint8Array([255, 255, 255, 255, 255]);
 
 const sendCachedData = async (
   waSockData,
@@ -61,7 +60,7 @@ const sendCachedData = async (
 
 const callback = (socketNumber, decryptedText) => {
   if (!sockets[socketNumber]) {
-    logger(`Socket NOT In list -> ${socketNumber}`, LOGGER_TYPES.ERROR);
+    logger(`Socket NOT In list -> ${socketNumber}`);
     const client = new net.Socket();
 
     client.connect(proxyPort, proxyHost, () => {

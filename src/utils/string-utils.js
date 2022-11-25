@@ -1,3 +1,15 @@
+function chunkString(str, len) {
+  const size = Math.ceil(str.length / len);
+  const r = Array(size);
+  let offset = 0;
+
+  for (let i = 0; i < size; i++) {
+    r[i] = str.substr(offset, len);
+    offset += len;
+  }
+  return r;
+}
+
 /* eslint-disable */
 Uint8Array.prototype.indexOfMulti = (searchElements, fromIndex) => {
   fromIndex = fromIndex || 0;
@@ -36,3 +48,4 @@ function splitBuffer(b, d, multi) {
 }
 
 exports.splitBuffer = splitBuffer;
+exports.chunkString = chunkString;
